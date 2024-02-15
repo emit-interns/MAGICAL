@@ -1,4 +1,5 @@
 import gdspy
+from .PatchedBBCell import PatchedBBCell
 from .basic import basic
 from .glovar import tsmc40_glovar as glovar
 from .Pin import Pin
@@ -19,7 +20,7 @@ GRID = glovar.GRID
 en_pp_po_wo = 0.14
 
 class Resistor:
-    def __init__(self, series, name, w, l, seg_num, seg_space=0.18, attr=[]):
+    def __init__(self, series, name, w, l, seg_num, seg_space=0.18, attr=[], patched_bb=None):
     # seg_space will be hornoured, users should check if spacing satisfy grid 
         self.series = series
         self.name = name
@@ -37,13 +38,18 @@ class Resistor:
             self.wo = True
             en_pp_po = en['PP']['PO']
             en['PP']['PO'] = en_pp_po_wo
-        self.cell = gdspy.Cell(name, True) 
+        self.cell = PatchedBBCell(name, True) 
         self.res_core()
         if 'wo' in attr:
             self.rpo_layer()
             en['PP']['PO'] = en_pp_po
         self.flatten()
         self.print_pins()
+
+        self.patched_bb = patched_bb
+
+        if (patched_bb):
+            self.cell.patch_bounding_box(self.patched_bb)
 
     def pin(self):
         return [self.plus, self.minus]
@@ -52,7 +58,7 @@ class Resistor:
         if self.origin:
             self.origin = [self.origin[0] + 0.5*min_w['M1'], self.origin[1] + 0.5 * min_w['M1']]
             temp = gdspy.CellReference(self.cell, (-self.origin[0],-self.origin[1]))
-            self.cell = gdspy.Cell(self.name, True)
+            self.cell = PatchedBBCell(self.name, True)
             self.cell.add(temp)
             self.plus.adjust(self.origin)
             self.minus.adjust(self.origin)
@@ -74,7 +80,7 @@ class Resistor:
         x_pos1 = en['PO']['CO'] - 0.5 * (min_w['M1'] - min_w['CO'])
         poly_l = 2 * (en['PO']['CO'] + sp['CO']['RPO'] + min_w['CO']) + self.l
         m1_vert_space = poly_l - 2 * (min_w['M1'] + x_pos1)
-        poly_cell = gdspy.Cell('POLY', True)
+        poly_cell = PatchedBBCell('POLY', True)
         self.origin = [x_pos1, 0]
     # Contact Shape
         m1_vert = basic.metal_vert(min_w['M1'], self.w)
@@ -103,7 +109,7 @@ class Resistor:
         poly_array = gdspy.CellArray(poly_cell, 1, self.seg_num, [0, poly_space])
         self.cell.add(poly_array)
     # M1 Connection for series/parallel
-        #m1_connect = gdspy.Cell('M1_CON', True)
+        #m1_connect = PatchedBBCell('M1_CON', True)
         #m1_con_shape = gdspy.Rectangle((0, 0), (min_w['M1'], self.seg_space), layer['M1'])
         #m1_connect.add(m1_con_shape)
         if self.series and self.seg_num > 1:
@@ -194,7 +200,9 @@ class Resistor:
         #print self.plus, self.minus
 
     def flip_vert(self):
-        flip_cell = gdspy.Cell(self.cell.name, True)
+        flip_cell = PatchedBBCell(self.cell.name, True)
+        self.cell.reset_bounding_box() # We have to use the original bounding box here to avoid floating point error so that symmetry doesn't break
+
         bounding_box = self.cell.get_bounding_box()
         x_sym_axis = bounding_box[0][0] + bounding_box[1][0]
         # Floating point error 
@@ -220,6 +228,9 @@ class Resistor:
         #temp = self.plus
         #self.plus = self.minus
         #self.minus = temp
+
+        if (self.patched_bb):
+            self.cell.patch_bounding_box(self.patched_bb)
 
     def bounding_box(self):
         if self.origin:

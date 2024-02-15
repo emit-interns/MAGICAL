@@ -127,10 +127,10 @@ class Device_generator(object):
             self.cell = Mosfet(False, ckt.name, self.norm_val(pch.width), self.norm_val(pch.length), pch.numFingers, self.get_attr(pch.attr), pinConType=pinConType, bulkCon=bulkCon, patched_bb=[[-9, -9], [9, 9]])
         elif implType == magicalFlow.ImplTypePCELL_Res:
             res = phyDB.resistor(implIdx)
-            self.cell = Resistor(res.series, ckt.name, self.norm_val(res.wr), self.norm_val(res.lr), res.segNum, self.norm_val(res.segSpace), self.get_attr(res.attr))
+            self.cell = Resistor(res.series, ckt.name, self.norm_val(res.wr), self.norm_val(res.lr), res.segNum, self.norm_val(res.segSpace), self.get_attr(res.attr), patched_bb=[[-9, -9], [9, 9]])
         elif implType == magicalFlow.ImplTypePCELL_Cap:
             cap = phyDB.capacitor(implIdx)
-            self.cell = Capacitor(ckt.name, self.norm_val(cap.w), self.norm_val(cap.spacing), cap.numFingers, self.norm_val(cap.lr), cap.stm, cap.spm, self.get_attr(cap.attr), self.norm_val(cap.ftip))
+            self.cell = Capacitor(ckt.name, self.norm_val(cap.w), self.norm_val(cap.spacing), cap.numFingers, self.norm_val(cap.lr), cap.stm, cap.spm, self.get_attr(cap.attr), self.norm_val(cap.ftip), patched_bb=[[-9, -9], [9, 9]])
         else:
             raise Exception("Unsupported device")
             return False

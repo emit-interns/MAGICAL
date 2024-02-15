@@ -1,4 +1,5 @@
 import gdspy
+from .PatchedBBCell import PatchedBBCell
 from .basic import basic
 from .glovar import tsmc40_glovar as glovar
 from .Pin import Pin
@@ -26,7 +27,7 @@ SP_SUB = 0.5 # Substrate contact to finger space
 W_SUB = min_w['M1'] #0.12 # Sub width
 
 class Capacitor:
-    def __init__(self, name, w, sp, nf, l, m_bot=3, m_top=5, attr=[], f_tip=0.14):
+    def __init__(self, name, w, sp, nf, l, m_bot=3, m_top=5, attr=[], f_tip=0.14, patched_bb=None):
         self.name = name
         self.w = w
         self.l = l
@@ -49,7 +50,7 @@ class Capacitor:
             if i != m_top:
                 self.via.append(i)
         self.f_tip = f_tip
-        self.cell = gdspy.Cell(name, True)
+        self.cell = PatchedBBCell(name, True)
         self.finger_core()
         if self.t2:
             self.t2_layer()
@@ -58,6 +59,11 @@ class Capacitor:
         self.via_layer()
         self.flatten()
         #self.print_pins()
+
+        self.patched_bb = patched_bb
+
+        if (patched_bb):
+            self.cell.patch_bounding_box(self.patched_bb)
 
     def pin(self):
         if self.t2:
@@ -69,7 +75,7 @@ class Capacitor:
         if self.origin:
             self.origin = [self.origin[0] + 0.5*min_w['M1'], self.origin[1] + 0.5 * min_w['M1']]
             temp = gdspy.CellReference(self.cell, (-self.origin[0],-self.origin[1]))
-            self.cell = gdspy.Cell(self.name, True)
+            self.cell = PatchedBBCell(self.name, True)
             self.cell.add(temp)
             self.plus.adjust(self.origin)
             self.minus.adjust(self.origin)
@@ -95,17 +101,17 @@ class Capacitor:
         self.origin = [0, 0]
         for metal in self.metal:
         # Cap core finger cell
-            finger_cell = gdspy.Cell("FINGER", True)
+            finger_cell = PatchedBBCell("FINGER", True)
             finger_shape = gdspy.Rectangle((0, self.finger_y1), (self.w, self.finger_y2), layer[metal])
             finger_cell.add(finger_shape)
             finger_array = gdspy.CellArray(finger_cell, self.nf, 1, [self.finger_sp, 0])
             self.cell.add(finger_array)
         # Finger extension
-            ext_cell = gdspy.Cell("EXT", True)
+            ext_cell = PatchedBBCell("EXT", True)
             ext_shape = gdspy.Rectangle((0, self.W_CON), (self.w, self.finger_y1), layer[metal])
             ext_cell.add(ext_shape)
             bot_ext = gdspy.CellArray(ext_cell, self.nf/2, 1, [2*self.finger_sp, 0])
-            bot_cell = gdspy.Cell("BOT_EXT", True)
+            bot_cell = PatchedBBCell("BOT_EXT", True)
             bot_cell.add(bot_ext)
             top_ext = gdspy.CellReference(bot_cell, (self.finger_sp, self.finger_y2-self.W_CON))
             self.cell.add([bot_ext, top_ext])
@@ -185,7 +191,7 @@ class Capacitor:
         via_offset = (width - W_VIA - (SP_VIA + W_VIA) * (via_count - 1))/2
         delta = 0.5 * (SP_VIA + W_VIA)
         for via in self.via:
-            via_cell = gdspy.Cell("VIA", True)
+            via_cell = PatchedBBCell("VIA", True)
             via_layer = layer['VIA'+str(via)]
             via_shape = gdspy.Rectangle((0, self.VIA_OFF), (W_VIA, self.VIA_OFF+W_VIA), via_layer)
             via_cell.add(via_shape)
@@ -210,7 +216,9 @@ class Capacitor:
             #print self.plus, self.minus, self.bulk
 
     def flip_vert(self):
-        flip_cell = gdspy.Cell(self.cell.name, True)
+        flip_cell = PatchedBBCell(self.cell.name, True)
+        self.cell.reset_bounding_box() # We have to use the original bounding box here to avoid floating point error so that symmetry doesn't break
+
         bounding_box = self.cell.get_bounding_box()
         x_sym_axis = bounding_box[0][0] + bounding_box[1][0]
         # Floating point error 
@@ -233,6 +241,9 @@ class Capacitor:
         self.plus.flip_vert(x_sym_axis)
         self.minus.flip_vert(x_sym_axis)
         self.bulk.flip_vert(x_sym_axis)
+
+        if (self.patched_bb):
+            self.cell.patch_bounding_box(self.patched_bb)
 
     def bounding_box(self):
         if self.origin:
