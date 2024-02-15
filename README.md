@@ -1,17 +1,32 @@
-# Setup Guide #
+# For Interns #
 
-Open this repository in codespaces. .devcontainer contains configurations to automatically build the docker container.
+## Setup Guide ##
 
-When adding new features, create a new branch and make a pull request.
+Open this repository in Github Codespaces. .devcontainer contains configurations to automatically build the docker container.
 
-Launch.json contains some debug setups. If you want to run the debugger, just press Ctrl+P or the top search bar, and type "debug COMP/NOT/ADC1" etc
+When adding new features, create a new issue underneath the issues tab, and then make a branch and checkout into it.
 
-## Weird Things ##
+Launch.json contains some debug setups. If you want to run the debugger, just press Ctrl+P or the top search bar, and type `debug COMP/NOT/ADC1` etc
 
-If python can't find the magicalflow library, make sure you're using the below as your python install
+## Known Issues ##
+
+### ImportError: No module named magicalFlow ###
+Make sure you're using the below as your python install
 `/usr/local/bin/python3`
 
-If you're running the debugger for the first time, you might have some errors about a missing gds folder. Just create a new gds folder underneath the example directory (for example, just create a new gds folder underneath /examples/adc1)
+### Running debugger and I get an error at gdspy.write_gds() ###
+
+Just create a new gds folder underneath the example directory (for example, `mkdir gds` underneath `MAGICAL/examples/comp`)
+
+### Updated files in device_generation but no changes happening when I run flow ###
+
+If you update any files underneath folders other than flow/ (i.e. device_generation/, ConstGen/), you need to `pip install` the updated library
+
+If you're running in Github Codespaces, just type the following commands
+
+`cd /workspaces/MAGICAL`
+
+`pip install device_generation/` (Replace device_generation with the folder you updated)
 
 # MAGICAL #
 
