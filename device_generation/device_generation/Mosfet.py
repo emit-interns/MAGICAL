@@ -1,4 +1,5 @@
 import gdspy
+from .PatchedBBCell import PatchedBBCell
 from .basic import basic
 from .glovar import tsmc40_glovar as glovar
 from .Pin import Pin
@@ -36,7 +37,7 @@ class Mosfet:
 # Note: na devices should only be compatible with nch
 # Unsupported attributes: x, dnw, hv25, snw, na25
 # GATE Connection metal check legalization if min_w['M1'] not 0.07
-    def __init__(self, nch, name, w, l, nf, attr=[], spectre=True, pinConType=None, bulkCon=[]):
+    def __init__(self, nch, name, w, l, nf, attr=[], spectre=True, pinConType=None, bulkCon=[], patched_bb=None):
         self.nmos = nch
         self.name = name
         if spectre:
@@ -52,7 +53,7 @@ class Mosfet:
         self.gate = Pin('G')
         self.source = Pin('S')
         self.bulk = Pin('B')
-        self.cell = gdspy.Cell(name, True)
+        self.cell = PatchedBBCell(name, True)
         if '25' in attr:
             sp_co_po = sp['CO']['PO']
             self.od25 = True
@@ -85,6 +86,11 @@ class Mosfet:
         self.flatten()
         self.print_pins()
 
+        self.patched_bb = patched_bb
+
+        if (patched_bb):
+            self.cell.patch_bounding_box(self.patched_bb)
+
     def pin(self):
         # TODO Future version should include all shapes
         if not self.nmos and NWELL_GR:
@@ -96,7 +102,7 @@ class Mosfet:
         if self.origin:
             self.origin = [self.origin[0] + 0.5*min_w['M1'], self.origin[1] + 0.5 * min_w['M1']]
             temp = gdspy.CellReference(self.cell, (-self.origin[0],-self.origin[1]))
-            self.cell = gdspy.Cell(self.name, True)
+            self.cell = PatchedBBCell(self.name, True)
             self.cell.add(temp)
             self.drain.adjust(self.origin)
             self.gate.adjust(self.origin)
@@ -167,7 +173,7 @@ class Mosfet:
         self.cell.add(m1_array)
         self.origin = [m1_array_offset, m1_y_legal]
     ### Gate Poly
-        gate_cell = gdspy.Cell('GATE', True)
+        gate_cell = PatchedBBCell('GATE', True)
         gate_shape = gdspy.Rectangle((0, -ex['PO']['OD']), (self.l, self.w+ex['PO']['OD']), layer['PO'])
         gate_cell.add(gate_shape)
         self.gate_space = m1_cell_space
@@ -239,7 +245,7 @@ class Mosfet:
             # KR_SP feature has been removed
             assert KR_SP == 0, "KR_SP FEATURE HAS BEEN REMOVED"
             # Gate Connection
-            gate_extension = gdspy.Cell('GATE_EXT', True)
+            gate_extension = PatchedBBCell('GATE_EXT', True)
             # Modified for legal
             self.gate_ext_len = 2 * min_w['SP'] + min_w['M1']#+ 1 * sp['M1']['M1'] + KR_SP
             if ex['PO']['OD'] > self.gate_ext_len:  # Handling nch_na devices
@@ -265,7 +271,7 @@ class Mosfet:
                 m1_dummy_x = m1_array_offset + m1_cell_space * self.nf
                 m1_dummy_source = gdspy.Rectangle((m1_dummy_x, m1_y_legal), (m1_dummy_x+min_w['M1'],self.w), layer['M1'])
                 self.cell.add(m1_dummy_source)
-            m1_square = gdspy.Cell('M1_SQUARE', True)
+            m1_square = PatchedBBCell('M1_SQUARE', True)
             m1_sq_shape = gdspy.Rectangle((0, -KR_SP), (min_w['M1'], KR_SP+min_w['SP']), layer['M1'])
             m1_square.add(m1_sq_shape)
             source_count = int(self.nf/2+1)
@@ -359,7 +365,9 @@ class Mosfet:
         #print self.drain, self.gate, self.source, self.bulk
 
     def flip_vert(self):
-        flip_cell = gdspy.Cell(self.cell.name, True)
+        flip_cell = PatchedBBCell(self.cell.name, True)
+        self.cell.reset_bounding_box() # We have to use the original bounding box here to avoid floating point error so that symmetry doesn't break
+
         bounding_box = self.cell.get_bounding_box()
         x_sym_axis = bounding_box[0][0] + bounding_box[1][0]
         # Floating point error 
@@ -383,6 +391,9 @@ class Mosfet:
         self.gate.flip_vert(x_sym_axis)
         self.source.flip_vert(x_sym_axis)
         self.bulk.flip_vert(x_sym_axis)
+
+        if (self.patched_bb):
+            self.cell.patch_bounding_box(self.patched_bb)
 
     def connect_pin_bulk(self):
         # This is only valid for device with guard ring
