@@ -35,6 +35,13 @@ class DesignDB(object):
         nlp = Netlist_parser(self.db)
         nlp.parse_hspice(sp_netlist)
 
+    def read_cdl_netlist(self, sp_netlist):
+        """
+        @brief parse cdl netlist
+        """
+        nlp = Netlist_parser(self.db)
+        nlp.parse_cdl(sp_netlist)
+
 class netlist_element(object):
     def __init__(self, typeof):
         self.typeof = typeof
@@ -366,6 +373,62 @@ class Netlist_parser(object):
             self._finish_raw_parse = True
             self.translate_raw_netlist()
 
+    def parse_cdl(self, netlist_file):
+        """
+        @brief parse the input cdl netlist file
+        @param .sp file
+        """
+        with open(netlist_file, 'r') as fin:
+            nl = fin.read()
+            ws = ' \t' #newlines are part of the syntax, thus redefine the whitespaces without it
+            _p.ParserElement.setDefaultWhitespaceChars(ws)
+
+            # spectre netlist grammar definition
+            EOL = _p.LineEnd().suppress() # end of line
+            linebreak = _p.Suppress(_p.LineEnd() + "+") # breaking a line with backslash newline
+            identifier=_p.Word(_p.alphanums+'_!<>#-+') # a name for...
+            number=_p.Word(_p.nums + ".") # a number
+            net = identifier # a net
+            nets = _p.Group(_p.OneOrMore(net('net') + ~_p.FollowedBy("=") | linebreak)) # many nets
+            cktname = identifier # name of a subcircuit
+            cktname_end = _p.CaselessLiteral(".ends").suppress()
+            comment = _p.Suppress("//" + _p.SkipTo(_p.LineEnd())) | _p.Suppress("*" + _p.SkipTo(_p.LineEnd()))
+            expression = _p.Word(_p.alphanums+'._*+-/()')
+            inst_param_key = identifier + _p.Suppress("=")
+            inst_param_value = expression('expression')
+            inst_parameter = _p.Group(inst_param_key('name') + inst_param_value('value')).setResultsName('key')
+            parameters = _p.Group(_p.ZeroOrMore(inst_parameter | linebreak)).setResultsName('parameters')
+            instname = identifier
+            instnets = _p.Group(_p.OneOrMore(net('net') + ~_p.FollowedBy("=") | linebreak))
+            instance = _p.Group(instname('name') + instnets('instnets') + parameters + EOL).setResultsName('instance')
+            subcircuit_content = _p.Group(_p.ZeroOrMore(instance | EOL | comment)).setResultsName('subnetlist')
+            subcircuit = _p.Group(
+                # matches subckt <name> <nets> <newline>
+                _p.CaselessLiteral(".subckt").suppress() + cktname('name') + _p.Optional(nets('nets')) + EOL  
+                # matches the content of the subcircuit
+                + subcircuit_content
+                # matches ends <name> <newline>
+                + cktname_end + EOL).setResultsName('subcircuit')
+            topcircuit = _p.Group(
+                # matches subckt <name> <nets> <newline>
+                _p.CaselessLiteral(".topckt").suppress() + cktname('name') + _p.Optional(nets('nets')) + EOL  
+                # matches the content of the subcircuit
+                + subcircuit_content
+                # matches ends <name> <newline>
+                + cktname_end + EOL).setResultsName('topcircuit')
+            netlist_element = topcircuit | subcircuit | EOL | comment('comment')
+            netlist = _p.ZeroOrMore(netlist_element) + _p.StringEnd()
+            
+            parameters.setParseAction(handle_parameters)
+            instance.setParseAction(handle_instance)
+            subcircuit.setParseAction(handle_subcircuit)
+            topcircuit.setParseAction(handle_topcircuit)
+
+
+            self.raw_netlist = netlist.parseString(nl) # Parse the file into raw_netlist and then translate into database
+
+            self._finish_raw_parse = True
+            self.translate_raw_netlist()
     def translate_raw_netlist(self):
         """
         @brief translate the raw netlist into DesignDB status

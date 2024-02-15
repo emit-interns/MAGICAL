@@ -37,6 +37,9 @@ class MagicalDB(object):
         if (params.spectre_netlist is not None):
             self.read_spectre_netlist(params.resultDir+params.spectre_netlist)
             return
+        if (params.cdl_netlist is not None):
+            self.read_cdl_netlist(params.resultDir+params.cdl_netlist)
+            return
         raise ParamException("No input netlist file!")
 
     def read_spectre_netlist(self, sp_netlist):
@@ -44,6 +47,9 @@ class MagicalDB(object):
 
     def read_hspice_netlist(self, sp_netlist):
         self.designDB.read_hspice_netlist(sp_netlist)
+
+    def read_cdl_netlist(self, sp_netlist):
+        self.designDB.read_cdl_netlist(sp_netlist)
 
     """
     Current & Signal Flow

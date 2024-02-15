@@ -39,6 +39,18 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "GPDK_CIRCUITS",
+            "type": "debugpy",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/examples/gpdk_circuits",
+            "program": "${workspaceFolder}/flow/python/Magical.py",
+            "args": [
+                "gpdk_circuits.json"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

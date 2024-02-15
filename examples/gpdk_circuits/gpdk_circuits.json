@@ -1,0 +1,7 @@
+{
+    "cdl_netlist" : "gpdk_circuits.cdl",
+    "resultDir" : "./",
+    "techfile"  : "../mockPDK/mock.techfile",
+    "simple_tech_file" :  "../mockPDK/techfile.simple",
+    "lef" : "../mockPDK/mock.lef"
+}
