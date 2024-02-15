@@ -11,12 +11,11 @@ Launch.json contains some debug setups. If you want to run the debugger, just pr
 ## Known Issues ##
 
 ### ImportError: No module named magicalFlow ###
-Make sure you're using the below as your python install
-`/usr/local/bin/python3`
+Make sure you're using the below as your python install: /usr/local/bin/python3
 
 ### Running debugger and I get an error at gdspy.write_gds() ###
 
-Just create a new gds folder underneath the example directory (for example, `mkdir gds` underneath `MAGICAL/examples/comp`)
+Create a new gds folder underneath the example directory (for example, `mkdir gds` underneath MAGICAL/examples/comp)
 
 ### Updated files in device_generation but no changes happening when I run flow ###
 
@@ -24,9 +23,11 @@ If you update any files underneath folders other than flow/ (i.e. device_generat
 
 If you're running in Github Codespaces, just type the following commands
 
-`cd /workspaces/MAGICAL`
-
-`pip install device_generation/` (Replace device_generation with the folder you updated)
+```
+cd /workspaces/MAGICAL
+pip install device_generation/
+```
+Replace device_generation/ with the folder you updated
 
 # MAGICAL #
 
