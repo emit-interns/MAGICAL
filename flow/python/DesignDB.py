@@ -554,7 +554,11 @@ class Netlist_parser(object):
                     nch = self.db.phyPropDB().nch(nchId)
                     nch.length = self.get_value(inst.parameters['l'], unit=1e-12)
                     nch.width = self.get_value(inst.parameters['w'], unit=1e-12)
-                    nch.numFingers = self.get_value(inst.parameters['nf'], unit=1)
+                    # TODO: DON'T KEEP THIS. ASK DAN ABOUT WHY THERE'S NO NF IN THE NETLIST
+                    if 'nf' in inst.parameters.keys():
+                        pch.numFingers = self.get_value(inst.parameters['nf'], unit=1)
+                    else:
+                        pch.numFingers = 1
                     if inst.pinConType:
                         nch.pinConType = inst.pinConType
                     if 'multi' in inst.parameters.keys():
@@ -567,7 +571,10 @@ class Netlist_parser(object):
                     pch = self.db.phyPropDB().pch(pchId)
                     pch.length = self.get_value(inst.parameters['l'], unit=1e-12)
                     pch.width = self.get_value(inst.parameters['w'], unit=1e-12)
-                    pch.numFingers = self.get_value(inst.parameters['nf'], unit=1)
+                    if 'nf' in inst.parameters.keys():
+                        pch.numFingers = self.get_value(inst.parameters['nf'], unit=1)
+                    else:
+                        pch.numFingers = 1
                     if inst.pinConType:
                         pch.pinConType = inst.pinConType
                     for bulkPin in inst.bulkCon:
@@ -703,6 +710,13 @@ def handle_instance(token):
     elif inst.instnets: # this is the case for hspice
         pins = inst.instnets[0:-1]
         reference = inst.instnets[-1]
+
+		# TODO: DON'T HARDCODE THIS MAPPPING. CREATE A SEPARATE FILE FOR CONVERSIONS BETWEEN DEVICE NAMES
+        if reference == "g45p1lvt":
+            reference = "pch_lvt"
+        elif reference == "g45n1lvt":
+            reference = "nch_lvt"
+
     parameters = inst.parameters
     i = instance(name, pins, reference, parameters)
     return [i]
