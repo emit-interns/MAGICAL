@@ -18,3 +18,8 @@ thirdparty
 *pin
 *sym
 *symnet
+
+!anaroute/**
+!ConstGen/**
+!device_generation/**
+!IdeaPlaceEx/**
