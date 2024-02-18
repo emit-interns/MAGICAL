@@ -39,10 +39,10 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
-        },  
+        },
         {
             "name": "Anaroute",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/anaroute/build/bin/anaroute",
             "externalConsole": true,
@@ -51,7 +51,6 @@
                 "trace": true
             },
             "showDisplayString": true
-            }
-
+        }
     ]
 }
