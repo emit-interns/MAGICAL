@@ -39,6 +39,19 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
-        }
+        },  
+        {
+            "name": "Anaroute",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/anaroute/build/bin/anaroute",
+            "externalConsole": true,
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+            },
+            "showDisplayString": true
+            }
+
     ]
 }

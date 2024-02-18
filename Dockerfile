@@ -1,4 +1,4 @@
-FROM gcc:6.3
+FROM gcc:13.2.0
 LABEL maintainer="Mingjie Liu <jay_liu@utexas.edu>"
 
 # Install cmake 3.16.3
@@ -12,11 +12,15 @@ RUN mkdir /opt/cmake \
 RUN apt update
 RUN apt upgrade -y
 
+# libboost-all-dev needs to be installed with remote gfortran dependency
+# https://github.com/docker-library/gcc/issues/57
+RUN apt-get install -y libboost-all-dev gfortran-
+
 # Install boost flex
 RUN apt-get install -y \
     build-essential zlib1g-dev libncurses5-dev libnss3-dev libssl-dev \
     libreadline-dev libffi-dev \
-    libboost-all-dev flex csh vim \
+    flex csh vim \
     python3-openssl 
     
 # Update openssl

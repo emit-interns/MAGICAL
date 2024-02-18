@@ -3,7 +3,7 @@
 {
 	"name": "Magical",
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "../Dockerfile"
 	},
 	"capAdd": ["SYS_PTRACE"]
 
