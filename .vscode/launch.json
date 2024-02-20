@@ -45,12 +45,17 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/anaroute/build/bin/anaroute",
-            "externalConsole": true,
-            "logging": {
-                "moduleLoad": false,
-                "trace": true
-            },
-            "showDisplayString": true
+            "args": [
+                "arg1",
+                "arg2"
+            ],
+            "environment": [
+                {
+                    "name": "config",
+                    "value": "Debug"
+                }
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

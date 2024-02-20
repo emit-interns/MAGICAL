@@ -1,9 +1,8 @@
 #!/bin/bash
 
-./anaroute --tech_lef ../mockPDK/mock.lef \
+../build/bin/anaroute --tech_lef ../mockPDK/mock.lef \
            --tech_file ../mockPDK/mock.techfile \
            --design_file ../mockPDK/mock.netlist \
-           --placement_layout ../mockPDK/mock.place.gds \
-           --iopin ../mockPDK/mock.iopin \
-           --spec ../mockPDK/mock.spec \
+           --placement_layout ../mockPDK/CTDSM_TOP.place.gds \
+           --iopin ../mockPDK/CTDSM_TOP.iopin \
            --out mock.route.gds
