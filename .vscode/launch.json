@@ -50,7 +50,30 @@
                 "gpdk_circuits.json"
             ],
             "console": "integratedTerminal",
-            "justMyCode": true
-        }
+            "justMyCode": false,
+            "python": "/usr/local/bin/python3",
+        },
+        {
+            "name": "Python C++ Debugger",
+            "type": "pythoncpp",
+            "request": "launch",
+            "pythonLaunchName": "GPDK_CIRCUITS",
+            "cppAttachName": "(gdb) Attach"
+        },
+        {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "/usr/local/bin/python3",
+            "processId": "",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }

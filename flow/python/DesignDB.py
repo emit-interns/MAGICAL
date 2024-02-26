@@ -556,9 +556,9 @@ class Netlist_parser(object):
                     nch.width = self.get_value(inst.parameters['w'], unit=1e-12)
                     # TODO: DON'T KEEP THIS. ASK DAN ABOUT WHY THERE'S NO NF IN THE NETLIST
                     if 'nf' in inst.parameters.keys():
-                        pch.numFingers = self.get_value(inst.parameters['nf'], unit=1)
+                        nch.numFingers = self.get_value(inst.parameters['nf'], unit=1)
                     else:
-                        pch.numFingers = 1
+                        nch.numFingers = 1
                     if inst.pinConType:
                         nch.pinConType = inst.pinConType
                     if 'multi' in inst.parameters.keys():

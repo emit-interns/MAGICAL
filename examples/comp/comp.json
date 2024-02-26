@@ -1,7 +1,7 @@
 {
     "spectre_netlist" : "comp.sp",
     "resultDir" : "./",
-    "techfile"  : "../mockPDK/mock.techfile",
+    "techfile"  : "../mockPDK/newlef.techfile",
     "simple_tech_file" :  "../mockPDK/techfile.simple",
-    "lef" : "../mockPDK/mock.lef"
+    "lef" : "../mockPDK/newlef.lef"
 }
