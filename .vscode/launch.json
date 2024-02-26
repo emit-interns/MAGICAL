@@ -75,5 +75,28 @@
                 }
             ]
         },
+        {
+            // This is the configuration for debugging c++ anaroute
+            "name": "anaroute",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/anaroute/build/bin/anaroute",
+            "args": [
+                "anaroute.json"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/anaroute/build/bin",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build anaroute"
+        }
     ]
 }
