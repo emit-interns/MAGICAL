@@ -96,32 +96,44 @@ class PnR(object):
         self.findOrigin(cktIdx)
         router = anaroutePy.AnaroutePy()
         router.setCircuitName(ckt.name)
+        print(f"router.setCircuitName({ckt.name})")
         placeFile = dirname + ckt.name + '.place.gds'
         if self.debug:
             iopinfile = dirname + ckt.name + ".iopin"
             self.writeiopifile(cktIdx, iopinfile)
         router.parseLef(self.params.lef)
+        print(f"router.parseLef({self.params.lef})")
         router.parseTechfile(self.params.techfile)
+        print(f"router.parseTechfile({self.params.techfile})")
         router.parseGds(placeFile)
+        print(f"router.parseGds({placeFile})")
         self.routeParsePin(router, cktIdx, dirname+ckt.name+'.gr')  
         router.setGridStep(2*self.gridStep)
+        print(f"router.setGridStep({2*self.gridStep})")
         router.setSymAxisX(2*self.symAxis)
+        print(f"router.setSymAxisX({2*self.symAxis})")
         router.setGridOffsetX(2*(self.origin[0] - self.gridStep * 10))
+        print(f"router.setGridOffsetX({2*(self.origin[0] - self.gridStep * 10)})")
         router.setGridOffsetY(2*(self.origin[1] - self.gridStep * 10))
-        print("routing grid off set", 2*(self.origin[0]), 2*(self.origin[1]))
+        print(f"router.setGridOffsetY({2*(self.origin[1] - self.gridStep * 10)})")
         #router.parseSymNet(dirname+ckt.name+'.symnet')
         if self.isTopLevel:
             for netIdx in self.routerNets:
                 net = ckt.net(netIdx)
                 if net.isIo():
                     router.addIOPort(net.name)
+                    print(f"router.addIOPort({net.name})")
         routerPass = router.solve(False)
+        print(f"router.solve(false)")
         router.evaluate()
+        print(f"router.evaluate()")
         if not routerPass:
             print("Routing failed! ckt ", ckt.name)
             assert(routerPass)
         router.writeLayoutGds(placeFile, dirname+ckt.name+'.route.gds', True)
+        print(f"router.writeLayoutGds({placeFile}, {dirname+ckt.name+'.route.gds'}, True)")
         router.writeDumb(placeFile, dirname+ckt.name+'.ioPin') 
+        print(f"router.writeLayoutGds({placeFile}, {dirname+ckt.name+'.route.gds'}, True)")
         # Read results to flow
         ckt.setTechDB(self.tDB)
         ckt.parseGDS(dirname+ckt.name+'.route.gds')
@@ -211,7 +223,7 @@ class PnR(object):
                 if net.isIo():
                     of.write("%s\n"% net.name)
     def routeParsePin(self, router, cktIdx, fileName):
-        router.init()
+        # router.init()
         ckt = self.dDB.subCkt(cktIdx)
         pinName = dict()
         pinNameIdx = 0
@@ -251,6 +263,7 @@ class PnR(object):
                     iopinshapeIsPowerStripe = 1
                 print("addPin", str(pinNameIdx), net.isPower(), iopinshapeIsPowerStripe)
                 router.addPin(str(pinNameIdx), net.isPower(), iopinshapeIsPowerStripe)
+                print(f"router.addPin({pinNameIdx}, {net.isPower()}, {iopinshapeIsPowerStripe})")
                 # Router starts as 0 with M
                 for iopinidx in range(conCkt.net(conNet).numIoPins()):
                     conLayer = conCkt.net(conNet).ioPinMetalLayer(iopinidx) - 1
@@ -260,6 +273,7 @@ class PnR(object):
                     assert conShape[0] <= conShape[2]
                     assert conShape[1] <= conShape[3]
                     router.addShape2Pin(pinNameIdx, conLayer, conShape[0]*2, conShape[1]*2, conShape[2]*2, conShape[3]*2)
+                    print(f"router.addShape2Pin({pinNameIdx}, {conLayer}, {conShape[0]*2}, {conShape[1]*2}, {conShape[2]*2}, {conShape[3]*2})")
                     print("addShape2Pin",pinNameIdx, conLayer, conShape[0]*2, conShape[1]*2, conShape[2]*2, conShape[3]*2)
                     if self.debug:
                         string = "%s %s %d %d %d %d %d %d %d\n" % (str(net.name), str(pinNameIdx), conLayer+1, conShape[0], conShape[1], conShape[2], conShape[3], netIsPower, iopinshapeIsPowerStripe)
@@ -269,6 +283,7 @@ class PnR(object):
                 assert self.cktNeedSub(cktIdx)
                 pinName[netIdx]['sub'] = pinNameIdx
                 router.addPin(str(pinNameIdx), net.isPower(), False)
+                print(f"router.addPin({pinNameIdx}, {net.isPower()}, False)")
                 print("addPin sub", str(pinNameIdx), net.isPower(), False)
                 #router.addPin2Net(pinNameIdx, netIdx)
                 # GDS and LEF unit mismatch, multiply by 2
@@ -278,6 +293,7 @@ class PnR(object):
                     assert self.subShapeList[i][0] <= self.subShapeList[i][2]
                     assert self.subShapeList[i][1] <= self.subShapeList[i][3]
                     router.addShape2Pin(pinNameIdx, self.params.psubLayer - 1, self.subShapeList[i][0]*2, self.subShapeList[i][1]*2, self.subShapeList[i][2]*2, self.subShapeList[i][3]*2)
+                    print(f"router.addShape({pinNameIdx}, {self.params.psubLayer - 1}, {self.subShapeList[i][0]*2}, {self.subShapeList[i][1]*2}, {self.subShapeList[i][2]*2}, {self.subShapeList[i][3]*2})")
                     print("addShape2Pin psub shape",  self.params.psubLayer - 1, self.subShapeList[i][0]*2, self.subShapeList[i][1]*2, self.subShapeList[i][2]*2, self.subShapeList[i][3]*2)
                     if self.debug:
                         string = "%s %s %d %d %d %d %d %d %d\n" % (net.name, str(pinNameIdx),  self.params.psubLayer, self.subShapeList[i][0], self.subShapeList[i][1], self.subShapeList[i][2], self.subShapeList[i][3], 1, 0)
@@ -292,6 +308,7 @@ class PnR(object):
             width, cuts, rows, cols = self.determineNetWidthVia(cktIdx, netIdx)
             width = self.dbuToRouterDbu(width)
             routerNetIdx = router.addNet(net.name, width, cuts, net.isPower() and not self.isSmallModule, rows, cols)  
+            print(f"router.addNet({net.name}, {width}, {cuts}, {net.isPower() and not self.isSmallModule}, {rows}, {cols})")
             print("addNet netname", net.name, "width", width, "cuts", cuts, "isPower", net.isPower() and not self.isSmallModule, "rows", rows, "cols", cols)
             if self.debug:
                 string = "%s %d %d %d %d %d\n" % (net.name, width, cuts, net.isPower() and not self.isSmallModule, rows, cols)
@@ -300,9 +317,11 @@ class PnR(object):
                 if pinId in pinName[netIdx]:
                     print("addPin2Net ", pinName[netIdx][pinId], routerNetIdx)
                     router.addPin2Net(pinName[netIdx][pinId], routerNetIdx)
+                    print(f"router.addPin2Net({pinName[netIdx][pinId]}, {routerNetIdx})")
             if isPsub:
                 print("addPin2Net pubs ver", pinName[netIdx]['sub'], routerNetIdx)
                 router.addPin2Net(pinName[netIdx]['sub'], netIdx)                
+                print(f"router.addPin2Net({pinName[netIdx]['sub']}, {netIdx})")
 
     def updateOriginPin(self, shape):
         xCenter = (shape[0] + shape[2]) / 2

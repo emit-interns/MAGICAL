@@ -19,3 +19,5 @@ CMakeCache.txt
 Makefile
 anaroutePy.cpython*.so
 install_manifest.txt
+
+BACKUP-*
