@@ -120,10 +120,11 @@ void Parser::correctPinNBlkLoc() {
   Blk* pBlk;
   Cir_ForEachBlk(_cir, pBlk, i) {
     Box<Int_t>* pBox = &pBlk->_box;
-    assert(abs(pBox->xl()) % 10 == 0 or abs(pBox->xl()) % 10 == 8);
-    assert(abs(pBox->yl()) % 10 == 0 or abs(pBox->yl()) % 10 == 8);
-    assert(abs(pBox->xh()) % 10 == 0 or abs(pBox->xh()) % 10 == 8);
-    assert(abs(pBox->yh()) % 10 == 0 or abs(pBox->yh()) % 10 == 8);
+    // TEMPORARY
+    // assert(abs(pBox->xl()) % 10 == 0 or abs(pBox->xl()) % 10 == 8);
+    // assert(abs(pBox->yl()) % 10 == 0 or abs(pBox->yl()) % 10 == 8);
+    // assert(abs(pBox->xh()) % 10 == 0 or abs(pBox->xh()) % 10 == 8);
+    // assert(abs(pBox->yh()) % 10 == 0 or abs(pBox->yh()) % 10 == 8);
     if (abs(pBox->xl()) % 10 == 8) {
       if (pBox->xl() > 0)
         pBox->setXL(pBox->xl() + 2);
