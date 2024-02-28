@@ -11,6 +11,10 @@ import magicalFlow
 class MagicalDB(object):
     def __init__(self, params):
         self.designDB = DesignDB.DesignDB()
+
+        if params.conversion_file is not None:
+            self.designDB.read_conversion_file(params.conversion_file)
+
         self.params = params
         self.digitalNetNames = ["clk"]
         self.techDB = magicalFlow.TechDB()

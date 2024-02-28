@@ -8,6 +8,7 @@
 import magicalFlow
 import pyparsing as _p
 
+import csv
 
 nmos_set = {"nmos", "nch", "nch_na", "nch_mac", "nch_lvt", "nch_lvt_mac", "nch_25_mac", "nch_na25_mac", "nch_hvt_mac", "nch_25ud18_mac"}
 pmos_set = {"pmos", "pch", "pch_mac", "pch_lvt", "pch_lvt_mac", "pch_25_mac", "pch_na25_mac", "pch_hvt_mac", "pch_25ud18_mac", "pch_hvt"}
@@ -17,9 +18,18 @@ unsupported_set = {"rppolyl", "crtmom", "crtmom_2t"}
 mos_set = nmos_set.union(pmos_set)
 pas_set = capacitor_set.union(resistor_set)
 
+# don't really want to use global here but handle_instance isn't a method
+device_map = {}
+
 class DesignDB(object):
     def __init__(self):
         self.db = magicalFlow.DesignDB()
+    
+    def read_conversion_file(self, conversion_file):
+        with open(conversion_file, 'r') as fin:
+            reader = csv.reader(fin, delimiter=' ', skipinitialspace=True)
+            for row in reader:
+                device_map[row[0]] = row[1]
 
     def read_spectre_netlist(self, sp_netlist):
         """
@@ -237,6 +247,7 @@ class Netlist_parser(object):
         """
         self.db = mdb
         self._finish_raw_parse = False # Flag for whether the first step of parsing the raw netlist has been finished
+    
     def parse_spectre(self, netlist_file):
         """
         @brief parse the input spectre netlist file
@@ -712,10 +723,14 @@ def handle_instance(token):
         reference = inst.instnets[-1]
 
 		# TODO: DON'T HARDCODE THIS MAPPPING. CREATE A SEPARATE FILE FOR CONVERSIONS BETWEEN DEVICE NAMES
-        if reference == "g45p1lvt":
-            reference = "pch_lvt"
-        elif reference == "g45n1lvt":
-            reference = "nch_lvt"
+        # if reference == "g45p1lvt":
+        #     reference = "pch_lvt"
+        # elif reference == "g45n1lvt":
+        #     reference = "nch_lvt"
+
+    # checks if inst.reference is a key in self.device_map, and if so asigns it to the value
+    if reference in device_map:
+        reference = device_map[reference]
 
     parameters = inst.parameters
     i = instance(name, pins, reference, parameters)

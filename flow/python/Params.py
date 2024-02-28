@@ -19,6 +19,7 @@ class Params:
         self.spectre_netlist = None # Input spectre netlist file
         self.hspice_netlist = None # Input hspice netlist file
         self.cdl_netlist = None # Input .cdl netlist file
+        self.conversion_file = None # Input device conversion file
         self.simple_tech_file = "" # Input simple tech file
         self.techfile = ""
         self.lef = ""
@@ -73,9 +74,11 @@ class Params:
 ========================================================
 spectre_netlist [required for spectre netlist]    | input .sp file 
 hspice_netlist [required for hspice netlist]    | input .sp file 
+cdl_netlist [required for cdl netlist]    | input .cdl file 
 simple_tech_file [required]    | input simple techfile 
         """ % (self.spectre_netlist,
                 self.hspice_netlist,
+                self.cdl_netlist,
                 self.simple_tech_file
                 )
         print(content)
@@ -100,6 +103,7 @@ simple_tech_file [required]    | input simple techfile
         if 'spectre_netlist' in data: self.spectre_netlist = data['spectre_netlist']
         if 'hspice_netlist' in data: self.hspice_netlist = data['hspice_netlist']
         if 'cdl_netlist' in data: self.cdl_netlist = data['cdl_netlist']
+        if 'conversion_file' in data: self.conversion_file = data['conversion_file']
         if 'simple_tech_file' in data: self.simple_tech_file = data['simple_tech_file']
         if 'resultDir' in data: self.resultDir = data['resultDir']
         if 'lef' in data : self.lef = data['lef']
