@@ -80,12 +80,12 @@
             "name": "anaroute",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/anaroute/build/bin/anaroute",
+            "program": "${workspaceFolder}/anaroute/bin/anaroute",
             "args": [
                 "anaroute.json"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/anaroute/build/bin",
+            "cwd": "${workspaceFolder}/anaroute/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
