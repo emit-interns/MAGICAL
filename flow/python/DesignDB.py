@@ -722,13 +722,6 @@ def handle_instance(token):
         pins = inst.instnets[0:-1]
         reference = inst.instnets[-1]
 
-		# TODO: DON'T HARDCODE THIS MAPPPING. CREATE A SEPARATE FILE FOR CONVERSIONS BETWEEN DEVICE NAMES
-        # if reference == "g45p1lvt":
-        #     reference = "pch_lvt"
-        # elif reference == "g45n1lvt":
-        #     reference = "nch_lvt"
-
-    # checks if inst.reference is a key in self.device_map, and if so asigns it to the value
     if reference in device_map:
         reference = device_map[reference]
 
