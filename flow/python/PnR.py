@@ -223,7 +223,7 @@ class PnR(object):
                 if net.isIo():
                     of.write("%s\n"% net.name)
     def routeParsePin(self, router, cktIdx, fileName):
-        # router.init()
+        router.init()
         ckt = self.dDB.subCkt(cktIdx)
         pinName = dict()
         pinNameIdx = 0

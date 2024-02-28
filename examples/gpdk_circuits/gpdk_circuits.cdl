@@ -1,5 +1,5 @@
-.SUBCKT INVX12LVT A VDD VSS Y
+SUBCKT INVX12LVT A VDD VSS Y
 *.PININFO A:I VDD:I VSS:I Y:O
-Mmp0 Y A VDD VDD g45p1lvt m=1 l=40u w=4.7u
-Mmn0 Y A VSS VSS g45n1lvt m=1 l=40u w=3.1u
+Mmp0 Y A VDD VDD g45p1lvt m=1 l=45n w=4.7u
+Mmn0 Y A VSS VSS g45n1lvt m=1 l=45n w=3.1u
 .ENDS
