@@ -1,0 +1,91 @@
+Oxide            1
+Nwell            2
+Poly             3
+Nimp             4
+Pimp             5
+Cont             6
+Metal1           7
+VIA1             8
+Metal2           9
+VIA2             10
+Metal3           11
+Capdum           12 
+Resdum           13  
+CapMetal         14
+BJTdum           15
+INDdummy         16              
+IND2dummy        17   
+Nhvt             18
+Nburied          19
+NPNdummy         20              
+PNPdummy         21 
+DIOdummy         22    
+Phvt             23
+Oxide_thk        24
+Psub             25
+Nlvt             26
+Plvt             27
+VIA3             30
+Metal4           31
+VIA4             32
+Metal5           33
+VIA5             34
+Metal6           35
+Bondpad          36 
+VIA6             37
+Metal7           38
+VIA7             39
+Metal8           40
+VIA8             41
+Metal9           42
+Nzvt             52
+VPNP2dum         60             
+VPNP5dum         61            
+VPNP10du         62 
+text             63 
+SRAM             64             
+PO_text          65            
+SEALRING         66              
+LOGO             67             
+ANALOG           68              
+FUSE             69     
+IND3dummy        70 
+ResWdum          71      
+SiProt           72
+ESDdummy         74
+M1Resdum         75             
+M2Resdum         76            
+M3Resdum         77              
+M4Resdum         78            
+M5Resdum         79            
+M6Resdum         80             
+M7Resdum         81            
+M8Resdum         82           
+M9Resdum         83
+Cap3dum          84
+PWdummy          85 
+FILLER           86             
+VIAEXCL          87  
+M10Resdum        93  
+prBoundary       99            
+M11Resdu         103   
+NPN2dum          110              
+NPN5dum          111            
+NPN10dum         112    
+VIA9             151
+Metal10          152
+VIA10            161
+Metal11          162
+
+
+
+           
+            
+          
+             
+            
+             
+          
+            
+
+
