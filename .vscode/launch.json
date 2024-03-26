@@ -47,7 +47,6 @@
             "request": "launch",
             "program": "${workspaceFolder}/anaroute/bin/anaroute",
             "args": [
-                "anaroute.json"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/anaroute/bin",
