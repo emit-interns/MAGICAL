@@ -50,6 +50,9 @@ class Resistor:
 
         if (patched_bb):
             self.cell.patch_bounding_box(self.patched_bb)
+        
+        debug_bb = gdspy.Rectangle(self.bounding_box()[0], self.bounding_box()[1], layer['DEBUG_BB'])
+        self.cell.add(debug_bb)
 
     def pin(self):
         return [self.plus, self.minus]

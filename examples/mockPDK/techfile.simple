@@ -30,6 +30,7 @@ VIA9			59
 TECHDB          63
 VTH_N            67
 VTH_P            68
+DEBUG_BB		100
 RPDMY           115
 RH              117
 MRDMY           150

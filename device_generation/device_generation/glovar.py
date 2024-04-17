@@ -14,6 +14,7 @@ class tsmc40_glovar:
     layer['DMEXCL'] = 150 
     layer['RH'] = 117
     layer['RPDMY'] = 115
+    layer['DEBUG_BB'] = 100
     layer['VTH_P'] = 68
     layer['VTH_N'] = 67
     layer['VIA8'] = 58

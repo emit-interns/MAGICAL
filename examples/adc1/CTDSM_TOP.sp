@@ -656,10 +656,11 @@ xr47 OTA1_INN VINT2P GND  rppolywo_m lr=34.8e-6 wr=400e-9 multi=1 m=1 series=46 
 **End of R47
 
 **Series configuration of R28
-xr24 OTA1_INP VINT2N GND  rppolywo_m lr=34.8e-6 wr=400e-9 multi=1 m=1 series=46 segspace=250e-9
+xr28 OTA1_INP VINT2N GND  rppolywo_m lr=34.8e-6 wr=400e-9 multi=1 m=1 series=46 segspace=250e-9
 **End of R28
 
 **Series configuration of R21
+xr21 net010 OTA1_INP GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=5 segspace=250e-9
 **End of R21
 
 **Series configuration of R20
@@ -667,17 +668,19 @@ xr20 net012 OTA1_INN GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=5 seg
 **End of R20
 
 **Series configuration of R23
+xr23 net010 OTA2_INP GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=10 segspace=250e-9
 **End of R23
 
 **Series configuration of R25
-xr23 net012 SUM_N GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=15 segspace=250e-9
+xr25 net012 SUM_N GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=15 segspace=250e-9
 **End of R25
 
 **Series configuration of R24
+xr24 net010 SUM_P GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=15 segspace=250e-9
 **End of R24
 
 **Series configuration of R22
-xr21 net012 OTA2_INN GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=10 segspace=250e-9
+xr22 net012 OTA2_INN GND  rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=10 segspace=250e-9
 **End of R22
 
 xr19 VINT2N SUM_N GND   rppolywo_m lr=10e-6 wr=600e-9 multi=1 m=1 series=1 segspace=250e-9
@@ -776,6 +779,8 @@ xi20 GND IBIAS1 VCM VDD OTA1_INP OTA1_INN VINT1P VINT1N OTA_XT_MAGICAL
 ** clk(sys_clk) gnd(gnd) outm(net028) outp(net020) vdd(vdd) _net0(sum_p) _net1(sum_n) 
 xi19 SYS_CLK GND net028 net020 VDD SUM_P SUM_N COMPARATOR_schematic
 
+rr1 net040 net010 VREF GND net025 SYS_CLKB VDD net035 RR1
+rr2 net026 net012 VREF GND net046 SYS_CLKB VDD net022 RR1
 
 **xi24 net040 net010 VREF GND BUFFD4BWP_LVT
 **xi25 net025 SYS_CLKB VDD net040 net035 VDD GND DFCND4BWP_LVT
