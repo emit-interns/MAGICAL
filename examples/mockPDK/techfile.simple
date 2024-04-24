@@ -31,6 +31,8 @@ TECHDB          63
 VTH_N            67
 VTH_P            68
 DEBUG_BB		100
+DEBUG_CONSHAPE_PIN		101
+DEBUG_SUBSHAPE_PIN		102
 RPDMY           115
 RH              117
 MRDMY           150

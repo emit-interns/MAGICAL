@@ -117,20 +117,20 @@ class Device_generator(object):
             bulkCon = []
             for i in range(nch.numBulkCon()):
                 bulkCon.append(nch.bulkCon(i))
-            self.cell = Mosfet(True, ckt.name, self.norm_val(nch.width), self.norm_val(nch.length), nch.numFingers, self.get_attr(nch.attr), pinConType=pinConType, bulkCon=bulkCon, patched_bb=[[-9, -9], [9, 9]])
+            self.cell = Mosfet(True, ckt.name, self.norm_val(nch.width), self.norm_val(nch.length), nch.numFingers, self.get_attr(nch.attr), pinConType=pinConType, bulkCon=bulkCon, patched_bb=[[0, 0], [5, 1]])
         elif implType == magicalFlow.ImplTypePCELL_Pch:
             pch = phyDB.pch(implIdx)
             pinConType = pch.pinConType
             bulkCon = []
             for i in range(pch.numBulkCon()):
                 bulkCon.append(pch.bulkCon(i))
-            self.cell = Mosfet(False, ckt.name, self.norm_val(pch.width), self.norm_val(pch.length), pch.numFingers, self.get_attr(pch.attr), pinConType=pinConType, bulkCon=bulkCon, patched_bb=[[-9, -9], [9, 9]])
+            self.cell = Mosfet(False, ckt.name, self.norm_val(pch.width), self.norm_val(pch.length), pch.numFingers, self.get_attr(pch.attr), pinConType=pinConType, bulkCon=bulkCon, patched_bb=[[0, 0], [5, 1]])
         elif implType == magicalFlow.ImplTypePCELL_Res:
             res = phyDB.resistor(implIdx)
-            self.cell = Resistor(res.series, ckt.name, self.norm_val(res.wr), self.norm_val(res.lr), res.segNum, self.norm_val(res.segSpace), self.get_attr(res.attr), patched_bb=[[-9, -9], [9, 9]])
+            self.cell = Resistor(res.series, ckt.name, self.norm_val(res.wr), self.norm_val(res.lr), res.segNum, self.norm_val(res.segSpace), self.get_attr(res.attr), patched_bb=[[0, 0], [5, 1]])
         elif implType == magicalFlow.ImplTypePCELL_Cap:
             cap = phyDB.capacitor(implIdx)
-            self.cell = Capacitor(ckt.name, self.norm_val(cap.w), self.norm_val(cap.spacing), cap.numFingers, self.norm_val(cap.lr), cap.stm, cap.spm, self.get_attr(cap.attr), self.norm_val(cap.ftip), patched_bb=[[-9, -9], [9, 9]])
+            self.cell = Capacitor(ckt.name, self.norm_val(cap.w), self.norm_val(cap.spacing), cap.numFingers, self.norm_val(cap.lr), cap.stm, cap.spm, self.get_attr(cap.attr), self.norm_val(cap.ftip), patched_bb=[[0, 0], [5, 1]])
         else:
             raise Exception("Unsupported device")
             return False

@@ -97,6 +97,7 @@ class PnR(object):
         router = anaroutePy.AnaroutePy()
         router.setCircuitName(ckt.name)
         placeFile = dirname + ckt.name + '.place.gds'
+        self.gdsii = gdspy.GdsLibrary(infile=placeFile);
         if self.debug:
             iopinfile = dirname + ckt.name + ".iopin"
             self.writeiopifile(cktIdx, iopinfile)
@@ -104,6 +105,8 @@ class PnR(object):
         router.parseTechfile(self.params.techfile)
         router.parseGds(placeFile)
         self.routeParsePin(router, cktIdx, dirname+ckt.name+'.gr')  
+        self.gdsii.name = "blah"
+        self.gdsii.write_gds(outfile=placeFile)
         router.setGridStep(2*self.gridStep)
         router.setSymAxisX(2*self.symAxis)
         router.setGridOffsetX(2*(self.origin[0] - self.gridStep * 10))
@@ -260,6 +263,9 @@ class PnR(object):
                     assert conShape[0] <= conShape[2]
                     assert conShape[1] <= conShape[3]
                     router.addShape2Pin(pinNameIdx, conLayer, conShape[0]*2, conShape[1]*2, conShape[2]*2, conShape[3]*2)
+
+                    self.gdsii.top_level()[0].add(gdspy.Rectangle([(conShape[0])/1000, (conShape[1])/1000], [(conShape[2])/1000, (conShape[3])/1000], 101))
+
                     print("addShape2Pin",pinNameIdx, conLayer, conShape[0]*2, conShape[1]*2, conShape[2]*2, conShape[3]*2)
                     if self.debug:
                         string = "%s %s %d %d %d %d %d %d %d\n" % (str(net.name), str(pinNameIdx), conLayer+1, conShape[0], conShape[1], conShape[2], conShape[3], netIsPower, iopinshapeIsPowerStripe)
@@ -278,6 +284,9 @@ class PnR(object):
                     assert self.subShapeList[i][0] <= self.subShapeList[i][2]
                     assert self.subShapeList[i][1] <= self.subShapeList[i][3]
                     router.addShape2Pin(pinNameIdx, self.params.psubLayer - 1, self.subShapeList[i][0]*2, self.subShapeList[i][1]*2, self.subShapeList[i][2]*2, self.subShapeList[i][3]*2)
+
+                    self.gdsii.top_level()[0].add(gdspy.Rectangle([(self.subShapeList[i][0])/1000, (self.subShapeList[i][1] )/1000], [(self.subShapeList[i][2] )/1000, (self.subShapeList[i][3] )/1000], 102))
+
                     print("addShape2Pin psub shape",  self.params.psubLayer - 1, self.subShapeList[i][0]*2, self.subShapeList[i][1]*2, self.subShapeList[i][2]*2, self.subShapeList[i][3]*2)
                     if self.debug:
                         string = "%s %s %d %d %d %d %d %d %d\n" % (net.name, str(pinNameIdx),  self.params.psubLayer, self.subShapeList[i][0], self.subShapeList[i][1], self.subShapeList[i][2], self.subShapeList[i][3], 1, 0)
