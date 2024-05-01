@@ -538,6 +538,10 @@ class Placer(object):
         for nodeIdx in range(self.ckt.numNodes()):
             cktNode = self.ckt.node(nodeIdx)
             subCkt = self.dDB.subCkt(cktNode.graphIdx)
+            mulConst = 50
+            if self.ckt.name == "INPUT_RES":
+                subCkt.layout().setBoundary(subCkt.layout().boundary().xLo * mulConst, subCkt.layout().boundary().yLo * mulConst, subCkt.layout().boundary().xHi * mulConst, subCkt.layout().boundary().yHi * mulConst)
+
             bBox = subCkt.layout().boundary()
             self.placer.addCellShape(nodeIdx, 0, bBox.xLo, bBox.yLo, bBox.xHi, bBox.yHi)
             if self.debug:
